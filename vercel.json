@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "api/lexishot.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/lexishot", "dest": "/api/lexishot.js" }
+  ]
+}
