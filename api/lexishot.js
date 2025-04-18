@@ -1,20 +1,27 @@
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
+
+  let input = null;
 
   try {
     const buffers = [];
     for await (const chunk of req) {
       buffers.push(chunk);
     }
-    const data = JSON.parse(Buffer.concat(buffers).toString());
-    const input = data.input;
+
+    const body = JSON.parse(Buffer.concat(buffers).toString());
+    input = body.input;
 
     if (!input) {
       return res.status(400).json({ error: 'Missing input' });
     }
+  } catch (error) {
+    return res.status(400).json({ error: 'Invalid JSON or missing input' });
+  }
 
+  try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -37,10 +44,10 @@ export default async function handler(req, res) {
       }),
     });
 
-    const dataOut = await response.json();
-    res.status(200).json({ output: dataOut.choices[0].message.content });
-  } catch (err) {
-    console.error('Error in LexiShot handler:', err);
+    const data = await response.json();
+    res.status(200).json({ output: data.choices[0].message.content });
+  } catch (error) {
+    console.error("OpenAI error:", error);
     res.status(500).json({ error: 'Internal server error' });
   }
 }
