@@ -1,24 +1,11 @@
 {
   "version": 2,
-  "functions": {
-    "api/*.js": {
-      "runtime": "@vercel/node@2.0.0"
-    }
-  },
+  "public": "public",
+  "builds": [
+    { "src": "api/lexishot.js", "use": "@vercel/node" }
+  ],
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/public/$1",
-      "headers": {
-        "Content-Type": "text/html; charset=utf-8"
-      }
-    }
+    { "src": "/api/lexishot", "dest": "/api/lexishot.js" },
+    { "src": "/", "dest": "/index.html" }
   ]
 }
